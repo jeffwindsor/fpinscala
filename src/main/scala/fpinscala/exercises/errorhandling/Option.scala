@@ -7,15 +7,29 @@ enum Option[+A]:
   case Some(get: A)
   case None
 
-  def map[B](f: A => B): Option[B] = ???
+  def map[B](f: A => B): Option[B] = this match
+    case None => None
+    case Some(a) => Some(f(a))
 
-  def getOrElse[B>:A](default: => B): B = ???
+  def getOrElse[B>:A](default: B): B = this match
+    case None => default
+    case Some(b) => b
 
-  def flatMap[B](f: A => Option[B]): Option[B] = ???
+  def flatMap[B](f: A => Option[B]): Option[B] = this match
+    case None => None
+    case Some(a) => f(a)
 
-  def orElse[B>:A](ob: => Option[B]): Option[B] = ???
+  def orElse[B>:A](default: Option[B]): Option[B] = this match
+    case None => default
+    case Some(_) => this
 
-  def filter(f: A => Boolean): Option[A] = ???
+    // None = None
+    // Some(3) = f(3) false => None 
+    // Some(5) = f(5) true => Some(5)
+    // f(x) = x > 4
+  def filter(f: A => Boolean): Option[A] = this match
+    case None    => None
+    case Some(a) => if f(a) then Some(a) else None
 
 object Option:
 
