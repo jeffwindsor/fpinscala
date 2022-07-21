@@ -15,9 +15,10 @@ enum Option[+A]:
     case None => default
     case Some(b) => b
 
-  def flatMap[B](f: A => Option[B]): Option[B] = this match
-    case None => None
-    case Some(a) => f(a)
+  def flatMap[B](f: A => Option[B]): Option[B] = 
+    this match
+      case None => None
+      case Some(a) => f(a)
 
   def orElse[B>:A](default: Option[B]): Option[B] = this match
     case None => default
@@ -50,10 +51,46 @@ object Option:
     if xs.isEmpty then None
     else Some(xs.sum / xs.length)
 
-  def variance(xs: Seq[Double]): Option[Double] = ???
+  def variance(xs: Seq[Double]): Option[Double] = mean(xs) match
+    case None => None
+    case Some(m) => mean(xs.map(x => math.pow(x-m,2)))
+    
+  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = 
+    a.flatMap(aa => b.flatMap(bb => Some(f(aa,bb))))
 
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = ???
+  def sequence[A](as: List[Option[A]]): Option[List[A]] = as match
+    case Nil => Some(Nil)
+    case h :: t => h.flatMap(a => sequence(t).map(ts => a::ts))
+ 
+      // h match 
+      // case None => None
+      // case Some(a) => sequence(t) match
+      //   case None => None
+      //   case Some(ts) => Some(a::ts)
 
-  def sequence[A](as: List[Option[A]]): Option[List[A]] = ???
+    //List(SOme(1), Some(2), Some(3)) => Some(List(1,2,3))
+    //List(SOme(1), None, Some(3))    => None
 
-  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = ???
+  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = 
+    as.foldRight(Some(Nil): Option[List[B]]) { (a, acc) => 
+      // for 
+      //   bs <- acc
+      //   b  <- f(a)
+      // yield b :: bs
+      acc.flatMap(bs => f(a).flatMap(b => Some(b :: bs)))
+    }
+    
+//    f(a) => Some(a*2)
+// List(Some(1), Some(2), Some(3)) 
+//     (Some(1), Some(Nil)) => bs = Nil,  b = 2 acc=> Some(2::Nil)
+//     (Some(2), Some(List(2)) =>
+//     (Some(3), Some(List(4,2)) =>
+//     Some(List(6,4,2))
+
+  
+    // case h :: t => 
+    //   f(h) match
+    //     case None => None
+    //     case Some(s) => traverse(t)(f) match
+    //       case None => None
+    //       case Some(ts) => Some(s::ts)
