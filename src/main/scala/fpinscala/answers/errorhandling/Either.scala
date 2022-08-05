@@ -18,7 +18,7 @@ enum Either[+E,+A]:
 
   def orElse[EE >: E, AA >: A](b: => Either[EE, AA]): Either[EE, AA] = this match
     case Left(_) => b
-    case Right(a) => Right(a)
+    case Right(_) => this
 
   def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = 
     for
