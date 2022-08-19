@@ -8,7 +8,7 @@ enum Either[+E,+A]:
   case Left(get: E)
   case Right(get: A)
 
-  def map[B](f: A => B): Either[E, B] = ???
+  def map[B](f: A => B): Either[E, B] = 
 
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = ???
 
