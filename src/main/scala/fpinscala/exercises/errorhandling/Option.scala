@@ -53,7 +53,6 @@ object Option:
 
   def variance(xs: Seq[Double]): Option[Double] = mean(xs) match
     case None => None
-<<<<<<< HEAD
     case Some(m) => mean(xs.map(x => math.pow(x-m,2)))
     
   def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = 
@@ -96,25 +95,3 @@ object Option:
     //       case None => None
     //       case Some(ts) => Some(s::ts)
     //case Some(m) => mean(xs.map(x => math.pow(x - m, 2)))
-
-  def map2[A,B,C](a: Option[A], b: Option[B])(f: (A, B) => C): Option[C] = a match
-    case None => None
-    case Some(aa) => b match 
-      case None => None
-      case Some(bb) => Some(f(aa,bb))
-
-  def sequence[A](as: List[Option[A]]): Option[List[A]] = as match
-    case Nil => Some(Nil)
-    case h :: t => h match 
-      case None => None
-      case Some(hh) => sequence(t) match
-        case None => None
-        case Some(ts) => Some(hh::ts)
-
-  def traverse[A, B](as: List[A])(f: A => Option[B]): Option[List[B]] = as match
-    case Nil => Some(Nil)
-    case h :: t => f(h) match 
-      case None => None
-      case Some(hh) => traverse(t)(f) match
-        case None => None
-        case Some(ts) => Some(hh::ts)
